@@ -50,6 +50,4 @@ object LinkedListTest {
             System.out.print(stack.pop().value.toString() + " ")
         }
     }
-
-
 }
