@@ -20,11 +20,12 @@ class Fibonacci {
 
         if (value == 0L) return preTwo
         if (value == 1L) return preOne
-        for (i in 2..value) {
+        for (i in 2  ..  value) {
             result = preOne+preTwo
             preTwo = preOne
             preOne = result
         }
         return result
     }
+
 }
