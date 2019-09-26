@@ -1,5 +1,7 @@
 package com.offer.ten
 
+import javax.print.attribute.IntegerSyntax
+
 /**
  * 输入一个整数，输出该数二进制表示中1的个数。其中负数用补码表示。
  *
@@ -10,8 +12,26 @@ package com.offer.ten
  */
 object Binary {
 
+    // TODO https://blog.csdn.net/k_koris/article/details/80508543
+
     @JvmStatic
     fun main(args: Array<String>) {
+        println(countOf1InBinary1(0B00000000_00000000_00000000_00000000)); // 0
+        println(countOf1InBinary1(0B00000000_00000000_00000000_00000001)); // 1
+        println(countOf1InBinary1(0B11111111_11111111_11111111_11111111.toInt())); // -1
+        println(0B01111111_11111111_11111111_11111111 == Integer.MAX_VALUE);
+        println(countOf1InBinary1(0B01111111_11111111_11111111_11111111)); // Integer.MAX_VALUE
+        println(0B10000000_00000000_00000000_00000000.toInt() == Integer.MIN_VALUE);
+        println(countOf1InBinary1(0B10000000_00000000_00000000_00000000.toInt())); // Integer.MIN_VALUE
+
+        println("============================================================")
+        println(countOf1InBinary4(0B00000000_00000000_00000000_00000000)); // 0
+        println(countOf1InBinary4(0B00000000_00000000_00000000_00000001)); // 1
+        println(countOf1InBinary4(0B11111111_11111111_11111111_11111111.toInt())); // -1
+        println(0B01111111_11111111_11111111_11111111 == Integer.MAX_VALUE);
+        println(countOf1InBinary4(0B01111111_11111111_11111111_11111111)); // Integer.MAX_VALUE
+        println(0B10000000_00000000_00000000_00000000.toInt() == Integer.MIN_VALUE);
+        println(countOf1InBinary4(0B10000000_00000000_00000000_00000000.toInt())); // Integer.MIN_VALUE
 
     }
 
@@ -19,9 +39,7 @@ object Binary {
     /**
      * &:与运算符
      * 二元操作符，操作两个二进制数据；两个二进制数最低位对齐，只有当两个对位数都是1时才为1，否则为0
-     *
      * 2 == 3 & 2
-     *
      * 3:00000000 00000000 00000000 00000011(补码)
      * 2:00000000 00000000 00000000 00000010(补码)
      * v:00000000 00000000 00000000 00000010 (补码)= 2
@@ -61,16 +79,79 @@ object Binary {
      *
      * ~:非运算符
      * 生成与输入位相反的值--若出入0，则输出1；若输入1，则输入0
-     * -3 == = ~ 2
+     * -3 == ~ 2
      * 2:00000000 00000000 00000000 00000010(补码)
      * v:11111111 11111111 11111111 11111101 (补码)= -3
      */
     fun countOf1InBinary1(value: Int): Int {
-        // 记录数字中1的位数
-        val result = 0
-
+        var value = value
+        // 记录数字中1的位数:它有很多0的循环,浪费时间
+        var result = 0
+        while (value != 0) {
+            result++
+            value = value and (value - 1)
+        }
+        return result
     }
 
+    /**
+     * 利用与运算符
+     */
+    fun countOf1InBinary2(value: Int): Int {
+        var value = value
+        var result = 0
+        for (i in 0..31) { // 它有很多0的循环,浪费时间
+            result = result + (value and 1)
+            value = value ushr 1
+        }
+        return result
+    }
 
-    fun countOf1InBinary2(value: Int): Int {}
+    fun countOf1InBinary3(value: Int): Int {
+        var value = value
+        var result = 0
+        //如果不是0的话
+        while (value != 0) {
+            //如果是负数，说明最高位是1，计数。
+            if (value < 0) {
+                result++
+            }
+            //否则右移
+            value = value shl 1
+        }
+        return result;
+    }
+
+    /**
+     * 原码:
+     * public static int bitCount(int i) {
+     *   // HD, Figure 5-2
+     *   i = i - ((i >>> 1) & 0x55555555);
+     *   i = (i & 0x33333333) + ((i >>> 2) & 0x33333333);
+     *   i = (i + (i >>> 4)) & 0x0f0f0f0f;
+     *   i = i + (i >>> 8);
+     *   i = i + (i >>> 16);
+     *   return i & 0x3f;
+     * }
+     *
+     * java源码中有很多匪夷所思的算法,它们通常是使用一个莫名的十六进制常量参与运算,而且效果奇快,这是啥子?
+     *
+     * 这种算法的思想是"归并算法",这是2路归并,两两一组相加,之后四个四个一组相加,接着八个八个,最后就得到各位之和了.
+     *
+     * 第一行是计算每两位中的 1 的个数 , 并且用该对应的两位来存储这个个数 ,如 : 01101100 -> 01011000 ,
+     * 即先把前者每两位分段 01 10 11 00 , 分别有 1 1 2 0 个 1, 用两位二进制数表示为 01 01 10 00, 合起来为 01011000。
+     *
+     * 第二行是计算每四位中的 1 的个数 , 并且用该对应的四位来存储这个个数 .如 : 01101100 经过第一行计算后得 01011000 ,
+     * 然后把 01011000 每四位分段成 0101 1000 , 段内移位相加 : 前段 01+01 =10 , 后段 10+00=10,
+     * 分别用四位二进制数表示为 0010 0010, 合起来为 00100010
+     *
+     * 下面的各行以此类推 , 分别计算每 8 位 ,16 位 ,32 位中的 1 的个数 。
+     *
+     * 将 0x55555555, 0x33333333, 0x0f0f0f0f 写成二进制数的形式就容易明白了 。
+     *
+     *
+     */
+    fun countOf1InBinary4(value: Int): Int {
+        return Integer.bitCount(value);
+    }
 }
