@@ -35,12 +35,13 @@ class MergeSortAlgorithm {
         if (lowerIndex < higherIndex) {
             val middle = (higherIndex + lowerIndex) / 2;
             // Below step sorts the left side of the array
-            println("a:"+middle)
+//            println("a:"+middle)
             doMergeSort(lowerIndex, middle);
+            println(array!![middle])
             // Below step sorts the right side of the array
-            println("b:"+middle)
+//            println("b:"+middle)
             doMergeSort(middle + 1, higherIndex);
-            println("c:"+middle)
+//            println("c:"+middle)
             mergeParts(lowerIndex, middle, higherIndex);
         }
     }
