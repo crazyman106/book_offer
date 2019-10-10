@@ -50,23 +50,14 @@ class MergeSortAlgorithm {
         for (i in lowerIndex..higherIndex) {
             tempMergArr!![i] = array!![i]
         }
-        var i = lowerIndex
-        var j = middle + 1
-        var k = lowerIndex
+        var i = lowerIndex //左数组起始位置
+        var j = middle + 1 //有数组起始位置
+        var k = lowerIndex // tempArray起始位置
         while (i <= middle && j <= higherIndex) {
-            if (tempMergArr!![i] <= tempMergArr!![j]) {
-                array!![k] = tempMergArr!![i]
-                i++
-            } else {
-                array!![k] = tempMergArr!![j]
-                j++
-            }
-            k++
+            array!![k++] = if (tempMergArr!![i] <= tempMergArr!![j]) tempMergArr!![i++] else tempMergArr!![j++]
         }
         while (i <= middle) {
-            array!![k] = tempMergArr!![i]
-            k++
-            i++
+            array!![k++] = tempMergArr!![i++]
         }
     }
 
