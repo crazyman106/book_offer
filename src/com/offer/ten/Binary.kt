@@ -8,12 +8,9 @@ import javax.print.attribute.IntegerSyntax
  *
  * https://blog.csdn.net/mengmengdastyle/article/details/80317246
  * https://blog.csdn.net/bigtree_3721/article/details/82954171?utm_source=app
- * https://blog.csdn.net/qq_35082030/article/details/69945093
- * https://www.cnblogs.com/hapjin/p/5518921.html
  */
 object Binary {
 
-    // TODO https://blog.csdn.net/k_koris/article/details/80508543
 
     @JvmStatic
     fun main(args: Array<String>) {

@@ -1,5 +1,9 @@
 package com.offer
 
+/**
+ *
+ * 排序算法共有八大类,即冒泡排序,选择排序,快速排序,插入排序,希尔排序,归并排序,基数排序以及堆排序;另外还有桶排序.
+ */
 object SortAlgorithmTest {
     @JvmStatic
     fun main(args: Array<String>) {
@@ -12,11 +16,24 @@ object SortAlgorithmTest {
         }
     }
 }
+class BubbleSortAlgorithm{
+    fun bubbleSort(arrays:IntArray):IntArray{
+        for ( i in 0 until arrays.size){
+            for (j in 0 until arrays.size-1-i){
+
+            }
+        }
+        return arrays;
+    }
+}
 
 /**
  * 将待排序的数列分成若干个长度为1的子数列，然后将这些数列两两合并；
  * 得到若干个长度为2的有序数列，再将这些数列两两合并；
  * 得到若干个长度为4的有序数列，再将它们两两合并；直接合并成一个数列为止。
+ *
+ * 归并排序中，用到了一个临时数组，故空间复杂度为O(N)
+ * 由归并排序的递归公式：T(N) = 2T(N/2) + O(N) 可知时间复杂度为O(NlogN)
  */
 class MergeSortAlgorithm {
     // 临时变量,用来存储临时数据
