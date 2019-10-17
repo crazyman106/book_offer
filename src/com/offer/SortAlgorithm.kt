@@ -1,5 +1,9 @@
 package com.offer
 
+import kotlin.math.min
+import kotlin.math.sign
+import kotlin.random.Random
+
 /**
  *
  * 排序算法共有八大类,即冒泡排序,选择排序,快速排序,插入排序,希尔排序,归并排序,基数排序以及堆排序;另外还有桶排序.
@@ -7,23 +11,122 @@ package com.offer
 object SortAlgorithmTest {
     @JvmStatic
     fun main(args: Array<String>) {
-        val inputArr = intArrayOf(45, 23, 11, 89, 77, 98, 4, 28, 65, 43)
-        val mms = MergeSortAlgorithm()
-        mms.sort(inputArr)
+        val inputArr = intArrayOf(45, 23, 11, 89, 77, 98, 4, 28, 65, 43, 8)
+//        val mms = MergeSortAlgorithm().sort(inputArr)
+//        BubbleSortAlgorithm().bubbleSort(inputArr)
+//        SelectionSortAlgorithm().selectSort(inputArr)
+//        InsertionSortAlgorithm().insertSort(inputArr)
+//        ShellSortAlgorithm().sort(inputArr)
+        QuickSortAlgorithm().quickSort(inputArr, 0, 10)
         for (i in inputArr) {
             print(i)
             print(" ")
         }
     }
 }
-class BubbleSortAlgorithm{
-    fun bubbleSort(arrays:IntArray):IntArray{
-        for ( i in 0 until arrays.size){
-            for (j in 0 until arrays.size-1-i){
 
+class QuickSortAlgorithm {
+    fun quickSort(arrays: IntArray, startIndex: Int, endIndex: Int) {
+        var pivot = arrays[startIndex]
+        var start = startIndex
+        var end = endIndex
+
+        while (start < end) {
+            while ((start < end) && (arrays[end] > pivot)) {
+                end--
+            }
+            while ((start < end) && (arrays[start] < pivot)) {
+                start++
+            }
+            if ((arrays[start] == arrays[end]) && (start < end)) {
+                start++
+            } else {
+                var temp = arrays[end]
+                arrays[end] = arrays[start]
+                arrays[start] = temp
             }
         }
-        return arrays;
+        if (start - 1 > startIndex) quickSort(arrays, startIndex, start - 1)
+        if (end + 1 < endIndex) quickSort(arrays, end + 1, endIndex)
+    }
+}
+
+/**
+ * 希尔排序
+ */
+class ShellSortAlgorithm {
+    fun sort(arrays: IntArray) {
+        if (arrays.size == 0) return
+        var gap = arrays.size / 2
+        while (gap >= 1) {
+            for (i in gap..arrays.size - 1) {
+                var j = i - gap
+                val temp = arrays[i]
+                while (j >= 0 && temp < arrays[j]) {
+                    arrays[j + gap] = arrays[j]
+                    j = j - gap;
+                }
+                arrays[j + gap] = temp
+            }
+            gap /= 2
+        }
+    }
+}
+
+/**
+ * 插入排序
+ */
+class InsertionSortAlgorithm {
+    fun insertSort(arrays: IntArray) {
+        if (arrays.size == 0) return
+        var currentValue = 0
+        for (i in 1 until arrays.size) {
+            currentValue = arrays[i]
+            var preIndex = i - 1
+            while (preIndex >= 0 && currentValue < arrays[preIndex]) {
+                arrays[preIndex + 1] = arrays[preIndex]
+                preIndex--
+            }
+            arrays[preIndex + 1] = currentValue
+        }
+    }
+}
+
+/**
+ * 选择排序
+ */
+class SelectionSortAlgorithm {
+    fun selectSort(arrays: IntArray) {
+        if (arrays.size == 0) return
+        for (i in 0 until arrays.size) {
+            var minIndex = i;
+            for (j in i until arrays.size) {
+                if (arrays[j] < arrays[minIndex]) {//找到最小的数
+                    minIndex = j;  //将最小数的索引保存
+                }
+            }
+            var temp = arrays[minIndex]
+            arrays[minIndex] = arrays[i]
+            arrays[i] = temp
+        }
+    }
+}
+
+/**
+ * 冒泡排序
+ */
+class BubbleSortAlgorithm {
+    fun bubbleSort(arrays: IntArray) {
+        if (arrays.size == 0) return
+        for (i in 0 until arrays.size) {
+            for (j in 0 until arrays.size - 1 - i) {
+                if (arrays[j] > arrays[j + 1]) {
+                    var temp = arrays[j + 1]
+                    arrays[j + 1] = arrays[j]
+                    arrays[j] = temp
+                }
+            }
+        }
     }
 }
 
@@ -51,14 +154,9 @@ class MergeSortAlgorithm {
     fun doMergeSort(lowerIndex: Int, higherIndex: Int) {
         if (lowerIndex < higherIndex) {
             val middle = (higherIndex + lowerIndex) / 2;
-            // Below step sorts the left side of the array
-//            println("a:"+middle)
             doMergeSort(lowerIndex, middle);
             println(array!![middle])
-            // Below step sorts the right side of the array
-//            println("b:"+middle)
             doMergeSort(middle + 1, higherIndex);
-//            println("c:"+middle)
             mergeParts(lowerIndex, middle, higherIndex);
         }
     }
