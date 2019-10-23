@@ -13,10 +13,43 @@ object SortAlgorithmTest {
 //        SelectionSortAlgorithm().selectSort(inputArr)
 //        InsertionSortAlgorithm().insertSort(inputArr)
 //        ShellSortAlgorithm().sort(inputArr)
-        QuickSortAlgorithm().quickSort(inputArr, 0, 10)
+//        QuickSortAlgorithm().quickSort(inputArr, 0, 10)
+//        HeapSortAlgorithm().heapSort(inputArr, 11)
+        CountSortAlgorithm().countSort(inputArr)
         for (i in inputArr) {
             print(i)
             print(" ")
+        }
+    }
+}
+
+
+class CountSortAlgorithm {
+    fun countSort(arrays: IntArray) {
+        if (arrays.size <= 1) return
+        var bias: Int = 0 // bias 偏差
+        var min = arrays[0]
+        var max = arrays[0]
+        for (i in 0 until arrays.size) {
+            if (arrays[i] > max) max = arrays[i]
+            if (arrays[i] < min) min = arrays[i]
+        }
+
+        bias = 0 - min
+        var bucket = IntArray(max - min + 1, { value -> 0 })  // bucket 桶
+        for (i in 0 until arrays.size) {
+            bucket[arrays[i] + bias]++
+        }
+        var index = 0
+        var i = 0
+        while (index < arrays.size) {
+            if (bucket[i] != 0) {
+                arrays[index] = i - bias
+                bucket[i]--
+                index++
+            } else {
+                i++
+            }
         }
     }
 }
@@ -27,14 +60,13 @@ class HeapSortAlgorithm {
     /**
      * lastLeftIndex:最后节点左子树,count全部节点数
      */
-    fun heapAdjust(arrays: IntArray, lastLeftIndex: Int, count: Int) {
-        var parentIndexTemp = lastLeftIndex
+    fun heapAdjust(arrays: IntArray, s: Int, n: Int) {
+        var parentIndexTemp = s
         var temp: Int;
-        temp = arrays[lastLeftIndex]
-        var i = 2 * lastLeftIndex // i为左子树节点
-        while (i < count) {
-            i *= 2
-            if (i < count && arrays[i] < arrays[i + 1]) {
+        temp = arrays[s]
+        var i = 2 * s  // i为左子树节点
+        while (i <= n) {
+            if (i < n && arrays[i] < arrays[i + 1]) {
                 i++
             }
             if (temp >= arrays[i]) {
@@ -42,21 +74,23 @@ class HeapSortAlgorithm {
             }
             arrays[parentIndexTemp] = arrays[i]
             parentIndexTemp = i;
+            i *= 2
         }
+        arrays[parentIndexTemp] = temp;
     }
 
     fun heapSort(arrays: IntArray, count: Int) {
         var i: Int = count / 2
         while (i > 0) {
-            i--
             heapAdjust(arrays, i, count)
+            i--
         }
         i = count
         while (i > 1) {
-            i--
             swap(arrays, 1, i) // 将根节点最大元素和最后一个节点互换,
             heapAdjust(arrays, 1, i - 1) // 互换后,在把除最后一个最大元素外的所有节点重新构建成大顶堆,
-            // 最后不断循环,直到把所有元素
+            i--
+            // 最后不断循环,直到把所有元素重新排序
         }
 
     }
@@ -64,7 +98,7 @@ class HeapSortAlgorithm {
     fun swap(arrays: IntArray, s: Int, c: Int) {
         var temp = arrays[s]
         arrays[s] = arrays[c]
-        arrays[c] = arrays[s]
+        arrays[c] = temp
     }
 }
 
