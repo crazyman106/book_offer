@@ -1,5 +1,8 @@
 package com.offer
 
+import java.util.*
+
+
 /**
  *
  * 排序算法共有八大类,即冒泡排序,选择排序,快速排序,插入排序,希尔排序,归并排序,基数排序以及堆排序;另外还有桶排序.
@@ -15,7 +18,8 @@ object SortAlgorithmTest {
 //        ShellSortAlgorithm().sort(inputArr)
 //        QuickSortAlgorithm().quickSort(inputArr, 0, 10)
 //        HeapSortAlgorithm().heapSort(inputArr, 11)
-        CountSortAlgorithm().countSort(inputArr)
+//        CountSortAlgorithm().countSort(inputArr)
+        BucketSortAlgorithm().bucketSort(inputArr)
         for (i in inputArr) {
             print(i)
             print(" ")
@@ -23,6 +27,43 @@ object SortAlgorithmTest {
     }
 }
 
+/**
+ * 1.可以先把元素存入桶中,在将每个桶内的数据进行排序
+ * 2.在想桶中插入数据时,先比较,然后插入到对应的位置
+ */
+class BucketSortAlgorithm {
+    fun bucketSort(arrays: IntArray) {
+        // 计算最大值与最小值
+        var max = arrays[0]
+        var min = arrays[0]
+        for (i in arrays.indices) {
+            max = Math.max(max, arrays[i])
+            min = Math.min(min, arrays[i])
+        }
+        // 计算桶的数量
+        var bucketNum = (max - min) / arrays.size + 1
+        val bucketArr = ArrayList<ArrayList<Int>>(bucketNum) // 桶列表
+        for (i in 0 until bucketNum) {
+            bucketArr.add(ArrayList())
+        }
+        // 将每个元素放入桶
+        for (i in arrays.indices) {
+            val num = (arrays[i] - min) / arrays.size
+            bucketArr[num].add(arrays[i])
+        }
+        // 对每个桶进行排序
+        for (i in bucketArr.indices) {
+            bucketArr[i].sort()
+        }
+        // 将桶中的元素赋值到原序列
+        var index = 0
+        for (i in 0 until bucketArr.size) {
+            for (k in 0 until bucketArr[i].size) {
+                arrays[index++] = bucketArr[i][k]
+            }
+        }
+    }
+}
 
 class CountSortAlgorithm {
     fun countSort(arrays: IntArray) {
