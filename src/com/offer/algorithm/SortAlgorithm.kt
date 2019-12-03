@@ -1,6 +1,8 @@
-package com.offer
+package com.offer.algorithm
 
+import sun.misc.LRUCache
 import java.util.*
+import java.util.Arrays
 
 
 /**
@@ -10,7 +12,7 @@ import java.util.*
 object SortAlgorithmTest {
     @JvmStatic
     fun main(args: Array<String>) {
-        val inputArr = intArrayOf(45, 23, 11, 89, 77, 98, 4, 28, 65, 43, 8)
+        val inputArr = intArrayOf(45, 23, 11, 89, 77, 98, 4, 28, 65, 43, 8, 320, 234, -5, -15, -354, 0)
 //        val mms = MergeSortAlgorithm().sort(inputArr)
 //        BubbleSortAlgorithm().bubbleSort(inputArr)
 //        SelectionSortAlgorithm().selectSort(inputArr)
@@ -19,7 +21,8 @@ object SortAlgorithmTest {
 //        QuickSortAlgorithm().quickSort(inputArr, 0, 10)
 //        HeapSortAlgorithm().heapSort(inputArr, 11)
 //        CountSortAlgorithm().countSort(inputArr)
-        BucketSortAlgorithm().bucketSort(inputArr)
+//        BucketSortAlgorithm().bucketSort(inputArr)
+        RadixSortAlgorithm().radixSort(inputArr)
         for (i in inputArr) {
             print(i)
             print(" ")
@@ -27,12 +30,92 @@ object SortAlgorithmTest {
     }
 }
 
+class RadixSortAlgorithm {
+
+    fun radixSort(arrays: IntArray) {
+        if (arrays.size <= 1) return
+        var mod = 10
+        var maxDigit = getMaxDigit(arrays) // 获取最大数的位数(如果是只有个位,则只排序一次,如果是十位,则排列2次,如果是百位,则排列三次...依次类推)
+
+        var i = 0
+        while (i < maxDigit) { // 根据位数排列循环排列数据
+            // 考虑负数的情况，这里扩展一倍队列数，其中 [0-9]对应负数，[10-19]对应正数 (bucket + 10)
+            /***
+             *
+             *
+             *
+             * 0    1   2   3   4   5   6   7   8   9  | 10   11   12    13   14    15    16    17    18    19
+             */
+            val counter = Array(mod * 2) { IntArray(0) } // 二维数组,一维表示存放(个位,十位,百位..相同数据的容器的容器列表),二维分别存放个位,十位相同数据的容器
+            // 循环数据,将每个元素(根据个位数,十位数,百位数)放到对应的位置上,
+            for (j in 0 until arrays.size) {
+                val bucket = (arrays[j] / Math.pow(10.0, i.toDouble()) % 10 + 10).toInt()
+                counter[bucket] = arrayAppend(counter[bucket], arrays[j])
+            }
+
+            // 将数据取出来,排成一个列表
+            var pos = 0
+            for (bucket in counter) {
+                for (value in bucket) {
+                    arrays[pos++] = value
+                }
+            }
+            i++
+        }
+    }
+
+    private fun arrayAppend(arr: IntArray, value: Int): IntArray {
+        var arrs = arr
+        arrs = Arrays.copyOf(arr, arr.size + 1)
+        arrs[arrs.size - 1] = value
+        return arrs
+    }
+
+    /**
+     * 获取最大位数
+     */
+    private fun getMaxDigit(arrays: IntArray): Int {
+        val maxValue = getMaxValue(arrays)
+        return getNumLength(maxValue.toLong())
+    }
+
+    /**
+     * 获取数组中最大值
+     */
+    private fun getMaxValue(arrays: IntArray): Int {
+        var maxValue = arrays[0]
+        for (value in arrays) {
+            if (maxValue < value) {
+                maxValue = value
+            }
+        }
+        return maxValue
+    }
+
+    /**
+     * 获取最大值的位数
+     */
+    private fun getNumLength(num: Long): Int {
+        if (num == 0L) {
+            return 1;
+        }
+        var lenght = 0
+        var temp = num
+        while (temp != 0L) {
+            lenght++
+            temp /= 10
+        }
+        return lenght
+    }
+}
+
 /**
  * 1.可以先把元素存入桶中,在将每个桶内的数据进行排序
- * 2.在想桶中插入数据时,先比较,然后插入到对应的位置
+ * 2.在向桶中插入数据时,先比较,然后插入到对应的位置
  */
 class BucketSortAlgorithm {
     fun bucketSort(arrays: IntArray) {
+        if (arrays.size <= 1) return
         // 计算最大值与最小值
         var max = arrays[0]
         var min = arrays[0]
